@@ -13,7 +13,7 @@ export default function Home (props){
                 src='../public/Home-Pizza.jpg'
                 alt=''
             />
-            <Link to="/pizza">Order Pizza</Link>
+            <Link id="order-pizza" to="/pizza">Order Pizza</Link>
         </div>
 
 

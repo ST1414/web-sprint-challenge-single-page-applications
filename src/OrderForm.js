@@ -36,7 +36,7 @@ export default function OrderForm (props){
 
 
     return (
-        <form className="pizza-form" onSubmit={onSubmit}>
+        <form id="pizza-form" onSubmit={onSubmit}>
 
 
             <div className="order-form-header">
@@ -63,6 +63,12 @@ export default function OrderForm (props){
                 </label><br/>
                 <label> Meat
                     <input type="checkbox" name="topping2" checked={formValues.topping2} onChange={onChange}/> 
+                </label><br/>
+                <label> Extra Cheese
+                    <input type="checkbox" name="topping3" checked={formValues.topping3} onChange={onChange}/> 
+                </label><br/>
+                <label> Mystery
+                    <input type="checkbox" name="topping4" checked={formValues.topping4} onChange={onChange}/> 
                 </label>
             </div>
             {/* -------------- SPECIAL INSTRUCTIONS (text) ------------------ */}

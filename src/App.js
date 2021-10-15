@@ -11,11 +11,13 @@ import formSchema from "./validation/formSchema";
 // ----- Initial Values ----- 
 const initialFormValues = { // form values
   //orderNum: "", // Comes from Post as 'id'
-  id: '',
+  id: "",
   name: "", 
   size: "",
   topping1: false,
   topping2: false,
+  topping3: false,
+  topping4: false,
   special:  ""
 }
 const initialErrorMsgs = { // form errors
@@ -64,21 +66,24 @@ export default function App () {
       size: formValues.size,
       topping1: formValues.topping1,
       topping2: formValues.topping2,
+      topping3: formValues.topping3,
+      topping4: formValues.topping4,
       special: formValues.special.trim()
     }
     axios.post("https://reqres.in/api/orders", newOrder)
       .then(response => {
-        console.log("POST Response: ", response);
+        console.log(response.data);
         setOrders([response.data, ...orders]);
+        // setFormValues(initialFormValues);
         history.push("/order-confirmed");
       })
       .catch(error => {
         console.log("ERROR: ", error);
       })
       .finally( () => {
-        setFormValues(initialFormValues);
+        // setFormValues(initialFormValues); /// Tests pass, but get warnings about this.
       })
-    
+      setFormValues(initialFormValues);
   }
 
   return (
