@@ -10,14 +10,15 @@ const initialFormValues = { // form values
   name: "",
   size: "",
   topping1: false,
-  topping2:  false,
+  topping2: false,
   special:  ""
 }
 const initialErrorMsgs = { // form errors
   name: ""
 }
 const initialDisabled = true;
-const initialOrders = []; // const initialOrderValues ={}
+const initialOrders = []; // ### REMOVE ###  const initialOrderValues ={}
+const initialOrderNum = 1;
 
 
 export default function App () {
@@ -26,9 +27,11 @@ export default function App () {
   const [formErrors, setFormErrors] = useState(initialErrorMsgs);
   const [disabled, setDisabled] = useState(initialDisabled);
   const [orders, setOrders] = useState(initialOrders);
+  const [orderNum, setOrderNum] = useState(initialOrderNum);
+
   
   // ----- Validate & Set Form Values in State -----
-  const updateinputField = (name, value) => {        // <<< inputChange
+  const updateinputField = (name, value) => {        // ### REMOVE ###  inputChange
     validateInputField(name, value);
     setFormValues({...formValues, [name]: value })
   }
@@ -42,11 +45,31 @@ export default function App () {
   // ----- Enable Submit Button Side Effect -----
   useEffect ( () => {
     formSchema.isValid(formValues).then(valid => setDisabled(!valid));
-    // If entire form is valid, then receive 'true' mgs, we then set button disabled to 'false'
+    // If entire form is valid, then receive 'true' msg, then set button disabled to 'false'
   })
 
   // ----- Submit Form to DB (Post) -----
-
+  const formSubmit = () => {
+    const newOrder = {
+      name: formValues.name,
+      size: formValues.size,
+      topping1: formValues.topping1,
+      topping2: formValues.topping2,
+      special: formValues.special.trim()
+    }
+    axios.post("https://reqres.in/api/orders")
+      .then(response => {
+        console.log("POST Response: ", response);
+        //setOrders([...orders, response.data])         ### UPDATE ### setOrders with response.data?
+      })
+      .catch(error => {
+        console.log("ERROR: ", error);
+      })
+      .finally( () => {
+        setFormValues(initialFormValues);
+      })
+    
+  }
 
 
 
