@@ -28,17 +28,25 @@ export default function App () {
   const [orders, setOrders] = useState(initialOrders);
   
   // ----- Validate & Set Form Values in State -----
-  const inputFieldUpdate = (name, value) => { // <<< inputChange
-    // validate(name, value);                    <<< ADD VALIDATION
+  const updateinputField = (name, value) => {        // <<< inputChange
+    validateInputField(name, value);
     setFormValues({...formValues, [name]: value })
   }
-
-  const validateInputFields = (name, value) => { 
+  const validateInputField = (name, value) => { 
     yup.reach(formSchema, name)
       .validate(value)
-      .then( () => setFormErrors({...formErrors, [name]: ''}) ) // Valid = No msg
-      // Invalid = ErrorMgs; Valid = No Msg
+      .then( response => setFormErrors({...formErrors, [name]: ''}) ) // Valid = No msg
+      .catch( error => setFormErrors({...formErrors, [name]: error.error[0]}) ) // Invalid = Error Msg
   }
+
+  // ----- Enable Submit Button Side Effect -----
+  useEffect ( () => {
+    formSchema.isValid(formValues).then(valid => setDisabled(!valid));
+    // If entire form is valid, then receive 'true' mgs, we then set button disabled to 'false'
+  })
+
+  // ----- Submit Form to DB (Post) -----
+
 
 
 
