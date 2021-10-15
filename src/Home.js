@@ -8,6 +8,7 @@ export default function Home (props){
 
         <div className='home-wrapper'>
             <h2>================</h2>
+            <h2>Home.js</h2>
             <img
                 className='home-image'
                 src='../public/Home-Pizza.jpg'

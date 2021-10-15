@@ -1,11 +1,11 @@
 import React, {useState, useEffect} from "react"; 
 import axios from "axios";
-import { Link, Route } from 'react-router-dom';
+import { Link, Route, useHistory } from 'react-router-dom';
 import * as yup from "yup";
 
 import Home from "./Home";
 import OrderForm from "./OrderForm";
-import OrderConfirmed from "./"  // <<<<<<<<<<<<< ### DO I NEED? ###
+import OrderConfirmed from "./OrderConfirmed"  // <<<<<<<<<<<<< ### DO I NEED? ###
 import formSchema from "./validation/formSchema";
 
 // ----- Initial Values ----- 
@@ -20,23 +20,25 @@ const initialFormValues = { // form values
 const initialErrorMsgs = { // form errors
   name: ""
 }
-const initialDisabled = true;
+const initialBtnDisabled = true;
 const initialOrders = [];
 const initialOrderNum = 1; // <<<<<<<<<<<<< ### DO I NEED? ###
 
 
 export default function App () {
+  
   // ----- States -----
   const [formValues, setFormValues] = useState(initialFormValues);
   const [formErrors, setFormErrors] = useState(initialErrorMsgs);
-  const [disabled, setDisabled] = useState(initialDisabled);
+  const [btnDisabled, setBtnDisabled] = useState(initialBtnDisabled);
   const [orders, setOrders] = useState(initialOrders);
   const [orderNum, setOrderNum] = useState(initialOrderNum);
+  const history = useHistory();
 
   
   // ----- Validate & Set Form Values in State -----
-  const updateinputField = (name, value) => {        // ### REMOVE NOTE ###  inputChange
-    validateInputField(name, value);
+  const updateInputField = (name, value) => {        // ### REMOVE NOTE ###  inputChange
+    //validateInputField(name, value);                 // #### UPDATE WHEN SCHEMA BUILT
     setFormValues({...formValues, [name]: value })
   }
   const validateInputField = (name, value) => { 
@@ -47,13 +49,11 @@ export default function App () {
       // Valid = No msg; Invalid = Error Msg
   }
 
-  // ----- Enable Submit Button Side Effect -----
-  useEffect ( () => {
-    formSchema.isValid(formValues).then(valid => setDisabled(!valid));
-    // If entire form is valid
-    // then receive 'true' msg
-    // then set button disabled to 'false'
-  })
+  // ----- Enable Submit Button Side Effect ----- #### UPDATE WHEN SCHEMA BUILT
+  // useEffect ( () => {
+  //   formSchema.isValid(formValues).then(valid => setBtnDisabled(!valid));
+  //   // If form valid, receive 'true' msg, set button disabled to 'false'
+  // }, [formValues])
 
   // ----- Submit Form to DB (Post) -----
   const formSubmit = () => {
@@ -68,7 +68,8 @@ export default function App () {
     axios.post("https://reqres.in/api/orders")
       .then(response => {
         console.log("POST Response: ", response);
-        //setOrders([...orders, response.data])   <<<<< ### UPDATE ### setOrders with response.data?
+        setOrders([...orders, response.data])   //<<<<< ### UPDATE ### setOrders with response.data?
+        history.push("/order-confirmed");
       })
       .catch(error => {
         console.log("ERROR: ", error);
@@ -87,7 +88,6 @@ export default function App () {
           <h1 className='store-name'>Lambda Eats</h1>
           <div className='nav-links'>
             <Link to="/">Home</Link><br/>
-            <Link to="/pizza">Order Pizza</Link>
           </div>
         </nav>
       </header>
@@ -95,8 +95,17 @@ export default function App () {
         <Home />
       </Route>
       <Route path="/pizza">
-        <OrderForm />
-      </Route>   
+        <OrderForm 
+          formValues={formValues}
+          formErrors={formErrors}
+          btnDisabled={btnDisabled}
+          formSubmit={formSubmit}
+          updateInputField={updateInputField} // ### REMOVE ### inputChange
+        />
+      </Route>
+      <Route exact path="/order-confirmed">
+        <OrderConfirmed orders={orders}/>
+      </Route> 
     </>
   );// End return
 
