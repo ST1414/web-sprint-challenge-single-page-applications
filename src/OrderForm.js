@@ -21,66 +21,66 @@ export default function OrderForm (props){
         updateInputField
     } = props;
 
-    console.log('PROPS: ', props); // <<<<<<<<<<<< ### REMOVE ###
-
     // ----- Update Input Field States -----
     const onChange = (event) => {
-        console.log('EVENT TARGET: ', event.target); // <<<<<<<<<<<< ### REMOVE ###
-        const { name, type, value, checkbox } = event.target;
-        const valueToChange = type === 'checkbox' ? checkbox : value;
+        const { name, type, value, checked } = event.target;
+        const valueToChange = type === 'checkbox' ? checked : value;
         updateInputField(name, valueToChange)
     }
 
     // ----- Submit Form, Prevent Default
+    const onSubmit = (event) => {
+        event.preventDefault();
+        formSubmit();
+    }
 
 
     return (
-        <form className="pizza-form" onSubmit={formSubmit}>
+        <form className="pizza-form" onSubmit={onSubmit}>
 
 
             <div className="order-form-header">
                 {/* <p>Insert picture</p> */}
-                <h2>================</h2> {/* ### REMOVE */}
                 <h1>Build Your Own Pizza</h1>
-                <h2>OrderForm.js</h2> {/* ### REMOVE */}
             </div>
             {/* ------------------- SIZE (dropdown) --------------------------- */}
-            <label>Size
-                <select onChange={onChange} value={formValues.size} name="size">
-                    <option value="">- Select a Size -</option>
-                    <option value="small">- Small -</option>
-                    <option value="medium">- Medium -</option>
-                    <option value="large">- Large -</option>
-                </select>
-            </label><br/><br/>
-            {/* -------------------- TOPPINGS (checkboxes)--------------------- */}
-            <label>Toppings (Choose up to 2)
-                <input
-                // <<<< Checkboxes
-                />
-            </label><br/><br/>
-            {/* -------------- SPECIAL INSTRUCTIONS (text) ------------------ */}
-            <label>Special Instructions
-                <input
-                // <<<< Text Box
-                />
-            </label><br/><br/>
-            {/* --------------------- NAME (text) ---------------------------- */}
-            <label>Name for Order
-                <input
-                // <<<< Text Box
-                />
-            </label><br/><br/>
-            {/* ------------------- ERROR MSGS + SUBMIT BTN ------------------ */}
-            <div className="error-msgs">
-                <h2>Error Msgs</h2>
-                <h3>{formErrors.name}</h3>
+            <div className="order-section">
+                <h3>Choose a Size</h3>
+                <label>Size
+                    <select id="size-dropdown" name="size" value={formValues.size} onChange={onChange} >
+                        <option value="">- Select a Size -</option>
+                        <option value="small">- Small -</option>
+                        <option value="medium">- Medium -</option>
+                        <option value="large">- Large -</option>
+                    </select>
+                </label>
             </div>
-            <button disabled={btnDisabled}>Add to Order!</button><br/>
-
-            {/* REMOVE LINK BELOW, ONLY FOR TESTING NAV */}
-            {/* ACTUAL URL CHANGE IN APP.JS POST */}
-            <Link to="/order-confirmed">Order Confirmation</Link><br/>
+            {/* -------------------- TOPPINGS (checkboxes)--------------------- */}
+            <div className="order-section">
+                <h3>Toppings</h3>
+                <label> Veggies
+                    <input type="checkbox" name="topping1" checked={formValues.topping1} onChange={onChange}/> 
+                </label><br/>
+                <label> Meat
+                    <input type="checkbox" name="topping2" checked={formValues.topping2} onChange={onChange}/> 
+                </label>
+            </div>
+            {/* -------------- SPECIAL INSTRUCTIONS (text) ------------------ */}
+            <div className="order-section">
+                <h3>Special Instructions</h3>
+                <label>Anything else you'd like to add?
+                    <input id="special-text" type="text" name="special" value={formValues.special} onChange={onChange}/>
+                </label>
+            </div>
+            {/* ------------- NAME (text) & SUBMIT (btn) & ERROR MSG ------------------- */}
+            <div className="order-section">
+                <h3>Ready to Order?</h3>
+                <label>Name for Order
+                    <input id="name-input" type="text" name="name" value={formValues.name} onChange={onChange}/>
+                </label>
+                <h4>{formErrors.name}</h4>
+                <button id="order-button" disabled={btnDisabled}>Add to Order!</button><br/>
+            </div>
         </form>
         
     )

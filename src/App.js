@@ -10,7 +10,8 @@ import formSchema from "./validation/formSchema";
 
 // ----- Initial Values ----- 
 const initialFormValues = { // form values
-  orderNum: "", // <<<<<<<< OPTIONAL
+  //orderNum: "", // Comes from Post as 'id'
+  id: '',
   name: "", 
   size: "",
   topping1: false,
@@ -22,7 +23,7 @@ const initialErrorMsgs = { // form errors
 }
 const initialBtnDisabled = true;
 const initialOrders = [];
-const initialOrderNum = 1; // <<<<<<<<<<<<< ### DO I NEED? ###
+// const initialOrderNum = 1; // Comes from Post as 'id'
 
 
 export default function App () {
@@ -32,43 +33,43 @@ export default function App () {
   const [formErrors, setFormErrors] = useState(initialErrorMsgs);
   const [btnDisabled, setBtnDisabled] = useState(initialBtnDisabled);
   const [orders, setOrders] = useState(initialOrders);
-  const [orderNum, setOrderNum] = useState(initialOrderNum);
+  //const [orderNum, setOrderNum] = useState(initialOrderNum); // Comes from Post as 'id'
   const history = useHistory();
 
   
   // ----- Validate & Set Form Values in State -----
-  const updateInputField = (name, value) => {        // ### REMOVE NOTE ###  inputChange
-    //validateInputField(name, value);                 // #### UPDATE WHEN SCHEMA BUILT
+  const updateInputField = (name, value) => { 
+    validateInputField(name, value);
     setFormValues({...formValues, [name]: value })
   }
   const validateInputField = (name, value) => { 
-    yup.reach(formSchema, name)
+    name === 'name' && yup.reach(formSchema, name)
       .validate(value)
-      .then( response => setFormErrors({...formErrors, [name]: ''}) ) 
-      .catch( error => setFormErrors({...formErrors, [name]: error.error[0]}) )
+      .then( () => setFormErrors({...formErrors, [name]: ''}) ) 
+      .catch( error => setFormErrors({...formErrors, [name]: error.errors[0]}) )
       // Valid = No msg; Invalid = Error Msg
   }
 
   // ----- Enable Submit Button Side Effect ----- #### UPDATE WHEN SCHEMA BUILT
-  // useEffect ( () => {
-  //   formSchema.isValid(formValues).then(valid => setBtnDisabled(!valid));
-  //   // If form valid, receive 'true' msg, set button disabled to 'false'
-  // }, [formValues])
+  useEffect ( () => {
+    formSchema.isValid(formValues).then(valid => setBtnDisabled(!valid));
+    // If form valid, receive 'true' msg, set button disabled to 'false'
+  }, [formValues])
 
   // ----- Submit Form to DB (Post) -----
   const formSubmit = () => {
     const newOrder = {
-      orderNum: formValues.orderNum,  // <<<<<<<< OPTIONAL
+      //orderNum: formValues.orderNum,  // <<<<<<<< OPTIONAL
       name: formValues.name, 
       size: formValues.size,
       topping1: formValues.topping1,
       topping2: formValues.topping2,
       special: formValues.special.trim()
     }
-    axios.post("https://reqres.in/api/orders")
+    axios.post("https://reqres.in/api/orders", newOrder)
       .then(response => {
         console.log("POST Response: ", response);
-        setOrders([...orders, response.data])   //<<<<< ### UPDATE ### setOrders with response.data?
+        setOrders([response.data, ...orders]);
         history.push("/order-confirmed");
       })
       .catch(error => {
@@ -76,7 +77,6 @@ export default function App () {
       })
       .finally( () => {
         setFormValues(initialFormValues);
-        setOrderNum(orderNum+1); // <<<<<<<< OPTIONAL
       })
     
   }
@@ -91,6 +91,7 @@ export default function App () {
           </div>
         </nav>
       </header>
+      <hr/>
       <Route exact path="/">
         <Home />
       </Route>
