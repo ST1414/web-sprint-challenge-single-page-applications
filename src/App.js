@@ -1,13 +1,17 @@
 import React, {useState, useEffect} from "react"; 
 import axios from "axios";
-import * as yup from "yup"; // <<<<<<<<<<<<< DO I NEED?
+import { Link, Route } from 'react-router-dom';
+import * as yup from "yup";
 
+import Home from "./Home";
 import OrderForm from "./OrderForm";
+import OrderConfirmed from "./"  // <<<<<<<<<<<<< ### DO I NEED? ###
 import formSchema from "./validation/formSchema";
 
 // ----- Initial Values ----- 
 const initialFormValues = { // form values
-  name: "",
+  orderNum: "", // <<<<<<<< OPTIONAL
+  name: "", 
   size: "",
   topping1: false,
   topping2: false,
@@ -17,8 +21,8 @@ const initialErrorMsgs = { // form errors
   name: ""
 }
 const initialDisabled = true;
-const initialOrders = []; // ### REMOVE ###  const initialOrderValues ={}
-const initialOrderNum = 1;
+const initialOrders = [];
+const initialOrderNum = 1; // <<<<<<<<<<<<< ### DO I NEED? ###
 
 
 export default function App () {
@@ -31,27 +35,31 @@ export default function App () {
 
   
   // ----- Validate & Set Form Values in State -----
-  const updateinputField = (name, value) => {        // ### REMOVE ###  inputChange
+  const updateinputField = (name, value) => {        // ### REMOVE NOTE ###  inputChange
     validateInputField(name, value);
     setFormValues({...formValues, [name]: value })
   }
   const validateInputField = (name, value) => { 
     yup.reach(formSchema, name)
       .validate(value)
-      .then( response => setFormErrors({...formErrors, [name]: ''}) ) // Valid = No msg
-      .catch( error => setFormErrors({...formErrors, [name]: error.error[0]}) ) // Invalid = Error Msg
+      .then( response => setFormErrors({...formErrors, [name]: ''}) ) 
+      .catch( error => setFormErrors({...formErrors, [name]: error.error[0]}) )
+      // Valid = No msg; Invalid = Error Msg
   }
 
   // ----- Enable Submit Button Side Effect -----
   useEffect ( () => {
     formSchema.isValid(formValues).then(valid => setDisabled(!valid));
-    // If entire form is valid, then receive 'true' msg, then set button disabled to 'false'
+    // If entire form is valid
+    // then receive 'true' msg
+    // then set button disabled to 'false'
   })
 
   // ----- Submit Form to DB (Post) -----
   const formSubmit = () => {
     const newOrder = {
-      name: formValues.name,
+      orderNum: formValues.orderNum,  // <<<<<<<< OPTIONAL
+      name: formValues.name, 
       size: formValues.size,
       topping1: formValues.topping1,
       topping2: formValues.topping2,
@@ -60,30 +68,35 @@ export default function App () {
     axios.post("https://reqres.in/api/orders")
       .then(response => {
         console.log("POST Response: ", response);
-        //setOrders([...orders, response.data])         ### UPDATE ### setOrders with response.data?
+        //setOrders([...orders, response.data])   <<<<< ### UPDATE ### setOrders with response.data?
       })
       .catch(error => {
         console.log("ERROR: ", error);
       })
       .finally( () => {
         setFormValues(initialFormValues);
+        setOrderNum(orderNum+1); // <<<<<<<< OPTIONAL
       })
     
   }
-
-
 
   return (
     <>
       <header>
         <nav>
-          <h2>Lambda Eats</h2>
-          <h2>Order Pizza Button</h2>
-          <h2>Add Home and help link</h2>
-          <h2>---END Header Section --- </h2>
+          <h1 className='store-name'>Lambda Eats</h1>
+          <div className='nav-links'>
+            <Link to="/">Home</Link><br/>
+            <Link to="/pizza">Order Pizza</Link>
+          </div>
         </nav>
       </header>
-      <OrderForm/>
+      <Route exact path="/">
+        <Home />
+      </Route>
+      <Route path="/pizza">
+        <OrderForm />
+      </Route>   
     </>
   );// End return
 
