@@ -38,13 +38,17 @@ Demonstrate your understanding of this week's concepts by answering the followin
 1. How would you explain form validation to someone who has never programmed before?
 1. In 1-2 sentences, define end to end testing.
 
+<!-- INTERVIEW QUESTIONS -->
+<!-- INTERVIEW QUESTIONS -->
+<!-- INTERVIEW QUESTIONS -->
+
 ## Instructions
 
 ### Task 1: Project Set Up
 
-- [ ] Create a forked copy of this project
-- [ ] Clone your OWN version of the repository (Not Lambda's by mistake!)
-- [ ] Implement the project on the main branch, committing changes regularly
+- [x] Create a forked copy of this project
+- [x] Clone your OWN version of the repository (Not Lambda's by mistake!)
+- [x] Implement the project on the main branch, committing changes regularly
 - [ ] Push commits: `git push origin main`
 - [ ] PUSH EVERYTHING TO THE MAIN BRANCH
 
